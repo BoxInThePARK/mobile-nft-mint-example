@@ -9,7 +9,7 @@
  * @format
  */
 
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useCallback} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -19,10 +19,10 @@ import {
   View,
   TouchableWithoutFeedback,
   Linking,
+  Image,
 } from 'react-native';
 
 import {Provider as PaperProvider} from 'react-native-paper';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Button} from 'react-native-paper';
 import {ConnectionProvider} from '@solana/wallet-adapter-react';
 import {WalletAdapterNetwork} from '@solana/wallet-adapter-base';
@@ -31,6 +31,7 @@ import {clusterApiUrl} from '@solana/web3.js';
 import {useAuthorization, Account} from './hooks/useAuthorization';
 import {useGuardedCallback} from './hooks/useGuardedCallback';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import RNFS from 'react-native-fs';
 
 const network = WalletAdapterNetwork.Devnet;
 
@@ -48,32 +49,53 @@ function getLabelFromAccount(account: Account) {
 const App = () => {
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [authorizationInProgress, setAuthorizationInProgress] = useState(false);
-
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const [imageURL, setImageURL] = useState<string>('');
 
   const connectWallet = useGuardedCallback(async () => {
     try {
-      // console.log('check 0');
       if (authorizationInProgress) {
         return;
       }
-      // console.log('check 1');
+
       setAuthorizationInProgress(true);
       await transact(async wallet => {
         await authorizeSession(wallet);
       });
-
-      // console.log('check 2');
-      // writeIsLoginToStorage('isLogin');
     } finally {
       setAuthorizationInProgress(false);
-      // console.log('check 3');
     }
   }, []);
+
+  const selectImage = useCallback(async () => {
+    RNFS.readDir(RNFS.DocumentDirectoryPath) // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
+      .then(result => {
+        console.log('GOT RESULT', result);
+
+        // stat the first file
+        return Promise.all([RNFS.stat(result[0].path), result[0].path]);
+      })
+      .then(statResult => {
+        if (statResult[0].isFile()) {
+          // if we have a file, read it
+          return RNFS.readFile(statResult[1], 'utf8');
+        }
+
+        return 'no file';
+      })
+      .then(contents => {
+        // log the file contents
+        console.log(contents);
+      })
+      .catch(err => {
+        console.log(err.message, err.code);
+      });
+  }, []);
+
+  const getRandomImage = () => {
+    const randomId = Math.floor(Math.random() * 1000);
+    const url = `https://picsum.photos/id/${randomId}/500`;
+    setImageURL(url);
+  };
 
   const selectedAccountPublicKeyBase58String = useMemo(() => {
     if (selectedAccount) {
@@ -151,10 +173,22 @@ const App = () => {
                   contentStyle={styles.connectButton}
                   mode="text"
                   uppercase
-                  onPress={() => {}}>
-                  <Text style={styles.buttonText}>Select Picture</Text>
+                  onPress={getRandomImage}>
+                  <Text style={styles.buttonText}>Get Random Image</Text>
                 </Button>
                 {/* Show selected image */}
+                {imageURL && (
+                  <Image
+                    source={{uri: imageURL}}
+                    style={{
+                      width: 400,
+                      height: 400,
+                      borderRadius: 10,
+                      marginBottom: 12,
+                    }}
+                    resizeMode="cover"
+                  />
+                )}
                 {/* Mint button */}
                 <Button
                   style={{
