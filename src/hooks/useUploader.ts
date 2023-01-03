@@ -3,16 +3,6 @@ import {useCallback} from 'react';
 import Arweave from 'arweave';
 import {REACT_APP_ARWEAVE_KEY} from '@env';
 
-const initOptions = {
-  host: 'arweave.net', // Hostname or IP address for a Arweave host
-  port: 443, // Port
-  protocol: 'https', // Network protocol http or https
-  timeout: 20000, // Network request timeouts in milliseconds
-  logging: false, // Enable network request logging
-};
-
-let arweave: Arweave;
-
 export function useUploader() {
   return useCallback(async (url: string, arweave: Arweave) => {
     // Download the selected image file
@@ -27,20 +17,26 @@ export function useUploader() {
     //   toFile: RNFS.DocumentDirectoryPath,
     //   headers: headers,
     // };
-
+    console.log('check1');
     let key = JSON.parse(REACT_APP_ARWEAVE_KEY);
     // const contentType = ['Content-Type', 'image/png'];
+    console.log('check2');
 
     const runUpload = async (
       data: string,
       contentType = ['Content-Type', 'image/png'],
       isUploadByChunk = false,
     ) => {
+      console.log('check4');
+
       const tx = await arweave.createTransaction({data: data}, key);
+      console.log('check5');
 
       tx.addTag(contentType[0], contentType[1]);
+      console.log('check6');
 
       await arweave.transactions.sign(tx, key);
+      console.log('check7');
 
       if (isUploadByChunk) {
         const uploader = await arweave.transactions.getUploader(tx);
@@ -62,11 +58,14 @@ export function useUploader() {
     };
 
     try {
+      console.log('check3');
+
       const {id} = await runUpload(url);
       console.log('id', id);
 
       // return id;
     } catch (err) {
+      console.log('check error');
       console.log(err);
     }
 

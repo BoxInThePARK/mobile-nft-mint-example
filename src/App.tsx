@@ -30,15 +30,31 @@ import {useAuthorization} from './hooks/useAuthorization';
 import {useGuardedCallback} from './hooks/useGuardedCallback';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RNFS from 'react-native-fs';
+import Arweave from 'arweave';
+import {useUploader} from './hooks/useUploader';
 
 const network = WalletAdapterNetwork.Devnet;
 
 const DEVNET_ENDPOINT = /*#__PURE__*/ clusterApiUrl(network);
 
+const initOptions = {
+  host: 'arweave.net', // Hostname or IP address for a Arweave host
+  port: 443, // Port
+  protocol: 'https', // Network protocol http or https
+  timeout: 20000, // Network request timeouts in milliseconds
+  logging: false, // Enable network request logging
+};
+
+let arweave: Arweave;
+
 const App = () => {
+  if (!arweave) {
+    arweave = Arweave.init(initOptions);
+  }
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [authorizationInProgress, setAuthorizationInProgress] = useState(false);
   const [imageURL, setImageURL] = useState<string>('');
+  const uploader = useUploader();
 
   const connectWallet = useGuardedCallback(async () => {
     try {
@@ -85,6 +101,10 @@ const App = () => {
     const url = `https://picsum.photos/id/${randomId}/500`;
     setImageURL(url);
   };
+
+  const mintNFT = useCallback(async () => {
+    await uploader(imageURL, arweave);
+  }, [imageURL, uploader]);
 
   const selectedAccountPublicKeyBase58String = useMemo(() => {
     if (selectedAccount) {
@@ -191,7 +211,7 @@ const App = () => {
                   contentStyle={styles.connectButton}
                   mode="text"
                   uppercase
-                  onPress={() => {}}>
+                  onPress={mintNFT}>
                   <Text style={styles.buttonText}>Mint to NFT</Text>
                 </Button>
               </>
