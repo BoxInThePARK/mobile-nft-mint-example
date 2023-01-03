@@ -26,7 +26,7 @@ import {ConnectionProvider} from '@solana/wallet-adapter-react';
 import {WalletAdapterNetwork} from '@solana/wallet-adapter-base';
 import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 import {clusterApiUrl} from '@solana/web3.js';
-import {useAuthorization, Account} from './hooks/useAuthorization';
+import {useAuthorization} from './hooks/useAuthorization';
 import {useGuardedCallback} from './hooks/useGuardedCallback';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RNFS from 'react-native-fs';
