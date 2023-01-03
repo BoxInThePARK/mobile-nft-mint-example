@@ -12,10 +12,8 @@
 import React, {useState, useMemo, useCallback} from 'react';
 import {
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   TouchableWithoutFeedback,
   Linking,
@@ -36,15 +34,6 @@ import RNFS from 'react-native-fs';
 const network = WalletAdapterNetwork.Devnet;
 
 const DEVNET_ENDPOINT = /*#__PURE__*/ clusterApiUrl(network);
-
-function getLabelFromAccount(account: Account) {
-  const base58EncodedPublicKey = account.publicKey.toBase58();
-  if (account.label) {
-    return `${base58EncodedPublicKey})`;
-  } else {
-    return base58EncodedPublicKey;
-  }
-}
 
 const App = () => {
   const {authorizeSession, selectedAccount} = useAuthorization();
