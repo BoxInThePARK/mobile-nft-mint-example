@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@craftzdog/react-native-buffer": "^6.0.5",
+    "@metaplex-foundation/js": "^0.17.12",
     "@solana-mobile/mobile-wallet-adapter-protocol": "^0.9.9",
     "@solana-mobile/mobile-wallet-adapter-protocol-web3js": "^0.9.9",
     "@solana/wallet-adapter-base": "^0.9.20",

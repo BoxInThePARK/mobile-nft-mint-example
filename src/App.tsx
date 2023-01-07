@@ -25,17 +25,20 @@ import {Button} from 'react-native-paper';
 import {ConnectionProvider} from '@solana/wallet-adapter-react';
 import {WalletAdapterNetwork} from '@solana/wallet-adapter-base';
 import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
-import {clusterApiUrl} from '@solana/web3.js';
+import {Connection, clusterApiUrl} from '@solana/web3.js';
 import {useAuthorization} from './hooks/useAuthorization';
 import {useGuardedCallback} from './hooks/useGuardedCallback';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useUploader} from './hooks/useUploader';
+import {Metaplex} from '@metaplex-foundation/js';
 
 const network = WalletAdapterNetwork.Devnet;
 
 const DEVNET_ENDPOINT = /*#__PURE__*/ clusterApiUrl(network);
 
 const App = () => {
+  const connection = new Connection(DEVNET_ENDPOINT);
+  const metaplex = new Metaplex(connection);
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [authorizationInProgress, setAuthorizationInProgress] = useState(false);
   const [imageURL, setImageURL] = useState<string>('');
