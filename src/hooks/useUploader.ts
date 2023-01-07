@@ -13,8 +13,15 @@ const initOptions = {
   logging: false, // Enable network request logging
 };
 
+const nftAttributes = [
+  {
+    trait_type: 'Image Type',
+    value: 'Random Lorem Ipsum',
+  },
+];
+
 export function useUploader() {
-  return useCallback(async (url: string) => {
+  return useCallback(async (url: string, account: string) => {
     const headers = {
       Accept: 'image/png',
       'Content-Type': 'image/png',
@@ -31,6 +38,43 @@ export function useUploader() {
 
     console.log('check1', RNFS.DocumentDirectoryPath);
     const key: JWKInterface = JSON.parse(REACT_APP_ARWEAVE_KEY_WITH_TOKEN);
+
+    const getNftName = () =>
+      `SolMeet-${(Math.random() + 1).toString(36).substring(4)}`;
+
+    const getMetadata = (
+      name: string,
+      imageUrl: string,
+      attributes: Record<string, string>[],
+    ) => ({
+      name,
+      symbol: 'SolMeet',
+      description: 'SolMeet #15 Demo NFT',
+      seller_fee_basis_points: 100,
+      external_url: 'https://solmeet.dev',
+      attributes,
+      collection: {
+        name: 'SolMeet',
+        family: 'DAO',
+      },
+      properties: {
+        files: [
+          {
+            uri: imageUrl,
+            type: 'image/png',
+          },
+        ],
+        category: 'image',
+        maxSupply: 0,
+        creators: [
+          {
+            address: account,
+            share: 100,
+          },
+        ],
+      },
+      image: imageUrl,
+    });
 
     const runUpload = async (
       data: string | Uint8Array | ArrayBuffer | undefined,
@@ -71,6 +115,7 @@ export function useUploader() {
 
     // Download the selected image file
     try {
+      const nftName = getNftName();
       const download = RNFS.downloadFile(options);
       const res = await download.promise;
       if (res.statusCode === 200) {
@@ -84,7 +129,30 @@ export function useUploader() {
 
         // Upload the image file to Arweave
         const {id} = await runUpload(data);
-        return id;
+
+        const imageUrl = id ? `https://arweave.net/${id}` : undefined;
+        console.log('imageUrl', imageUrl);
+
+        const metadata = getMetadata(nftName, imageUrl, nftAttributes);
+
+        const metaContentType = ['Content-Type', 'application/json'];
+        const metadataString = JSON.stringify(metadata);
+
+        const {id: metadataId} = await runUpload(
+          metadataString,
+          metaContentType,
+        );
+
+        const metadataUrl = id
+          ? `https://arweave.net/${metadataId}`
+          : undefined;
+
+        console.log('metadataUrl', metadataUrl);
+
+        return {
+          name: nftName,
+          uri: metadataUrl,
+        };
       }
     } catch (err) {
       console.error('error', err);

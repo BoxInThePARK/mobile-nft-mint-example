@@ -63,9 +63,12 @@ const App = () => {
   };
 
   const mintNFT = useCallback(async () => {
-    const id = await uploader(imageURL);
-    console.log('id', id);
-  }, [imageURL, uploader]);
+    const metaData = await uploader(
+      imageURL,
+      selectedAccount.publicKey.toBase58(),
+    );
+    console.log('metaData', metaData);
+  }, [imageURL, selectedAccount.publicKey, uploader]);
 
   const selectedAccountPublicKeyBase58String = useMemo(() => {
     if (selectedAccount) {
