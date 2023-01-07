@@ -26,10 +26,10 @@ import {ConnectionProvider} from '@solana/wallet-adapter-react';
 import {WalletAdapterNetwork} from '@solana/wallet-adapter-base';
 import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 import {clusterApiUrl} from '@solana/web3.js';
-import {useAuthorization, Account} from './hooks/useAuthorization';
+import {useAuthorization} from './hooks/useAuthorization';
 import {useGuardedCallback} from './hooks/useGuardedCallback';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import RNFS from 'react-native-fs';
+import {useUploader} from './hooks/useUploader';
 
 const network = WalletAdapterNetwork.Devnet;
 
@@ -39,6 +39,7 @@ const App = () => {
   const {authorizeSession, selectedAccount} = useAuthorization();
   const [authorizationInProgress, setAuthorizationInProgress] = useState(false);
   const [imageURL, setImageURL] = useState<string>('');
+  const uploader = useUploader();
 
   const connectWallet = useGuardedCallback(async () => {
     try {
@@ -55,36 +56,16 @@ const App = () => {
     }
   }, []);
 
-  const selectImage = useCallback(async () => {
-    RNFS.readDir(RNFS.DocumentDirectoryPath) // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
-      .then(result => {
-        console.log('GOT RESULT', result);
-
-        // stat the first file
-        return Promise.all([RNFS.stat(result[0].path), result[0].path]);
-      })
-      .then(statResult => {
-        if (statResult[0].isFile()) {
-          // if we have a file, read it
-          return RNFS.readFile(statResult[1], 'utf8');
-        }
-
-        return 'no file';
-      })
-      .then(contents => {
-        // log the file contents
-        console.log(contents);
-      })
-      .catch(err => {
-        console.log(err.message, err.code);
-      });
-  }, []);
-
   const getRandomImage = () => {
     const randomId = Math.floor(Math.random() * 1000);
     const url = `https://picsum.photos/id/${randomId}/500`;
     setImageURL(url);
   };
+
+  const mintNFT = useCallback(async () => {
+    const id = await uploader(imageURL);
+    console.log('id', id);
+  }, [imageURL, uploader]);
 
   const selectedAccountPublicKeyBase58String = useMemo(() => {
     if (selectedAccount) {
@@ -191,7 +172,7 @@ const App = () => {
                   contentStyle={styles.connectButton}
                   mode="text"
                   uppercase
-                  onPress={() => {}}>
+                  onPress={mintNFT}>
                   <Text style={styles.buttonText}>Mint to NFT</Text>
                 </Button>
               </>
