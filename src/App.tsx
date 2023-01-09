@@ -71,7 +71,7 @@ const App = () => {
       selectedAccount.publicKey.toBase58(),
     );
     console.log('metaData', metaData);
-  }, [imageURL, selectedAccount.publicKey, uploader]);
+  }, [imageURL, selectedAccount?.publicKey, uploader]);
 
   const selectedAccountPublicKeyBase58String = useMemo(() => {
     if (selectedAccount) {
