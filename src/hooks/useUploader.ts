@@ -152,6 +152,7 @@ export function useUploader() {
         return {
           name: nftName,
           uri: metadataUrl,
+          id: metadataId,
         };
       }
     } catch (err) {
