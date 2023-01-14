@@ -98,6 +98,7 @@ const MainScreen = () => {
       );
       const treasury = metaplex.identity().publicKey;
 
+      //Find Candy Machine with Address
       console.log('Fetch the Candy Machine');
       let candyMachine = await metaplex.candyMachines().findByAddress({
         address: new PublicKey(REACT_APP_CANDY_MACHINE_ADDRESS),
@@ -114,6 +115,7 @@ const MainScreen = () => {
         },
       });
 
+      //Insert Item and Refresh Candy Machine
       console.log('Insert Item to the Candy Machine');
       await metaplex.candyMachines().insertItems({
         candyMachine,
