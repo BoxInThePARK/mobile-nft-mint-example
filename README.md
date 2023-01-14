@@ -100,8 +100,13 @@ Follow this [doc](https://docs.arweave.org/info/wallets/arweave-web-extension-wa
 ## Part 2: Run The App on Android Emulator/Device
 
 ### Setup Arweave Wallet
+Follow this [doc](https://docs.arweave.org/info/wallets/arweave-web-extension-wallet) to setup your Arweave wallet and claim free AR token by completing assigned task.
 
 ### Setup Minter Wallet (if needs)
+To initialize metaple js, you need to set an identity.
+There are two functions to let you set the identity.
+- walletIdentity()
+- 
 
 ### Connect Wallet
 
