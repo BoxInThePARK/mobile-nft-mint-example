@@ -21,6 +21,7 @@ import {
   keypairIdentity,
   Metaplex,
   sol,
+  toBigNumber,
   toDateTime,
 } from '@metaplex-foundation/js';
 import {
@@ -70,20 +71,16 @@ const MainScreen = () => {
   );
 
   const mintNFT = useCallback(async () => {
+    console.log('Start Minting Process');
     // Upload metadata and image to arweave.
+    console.log('Upload metadata and image to arweave');
     const metaData = await uploader(
       imageURL,
       selectedAccount.publicKey.toBase58(),
     );
-    console.log('metaData', metaData);
+    console.log('metaData:', metaData);
 
     if (metaData) {
-      console.log('Fetch MetaData');
-      const jsonMetaData = metaData.uri;
-      const res = await fetch(jsonMetaData);
-      const parsedMetaData = await res.json();
-      console.log('parsedMetaData', parsedMetaData.name);
-
       const metapleKeypair = Keypair.fromSecretKey(
         bs58.decode(REACT_APP_METAPLEX_PRIVATE_KEY),
       );
@@ -110,7 +107,7 @@ const MainScreen = () => {
       await metaplex.candyMachines().update({
         candyMachine,
         guards: {
-          // botTax: {lamports: sol(0.01), lastInstruction: true},
+          botTax: {lamports: sol(0.01), lastInstruction: true},
           solPayment: {amount: sol(0.1), destination: treasury},
           startDate: {date: toDateTime('2022-10-17T16:00:00Z')},
           // All other guards are disabled...
@@ -133,7 +130,7 @@ const MainScreen = () => {
         owner: selectedAccount.publicKey,
       });
 
-      console.log('test', nft.address.toBase58());
+      console.log('NFT Address:', nft.address.toBase58());
     }
   }, [connection, imageURL, selectedAccount, uploader]);
 
