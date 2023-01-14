@@ -81,10 +81,7 @@ export function useUploader() {
       contentType = ['Content-Type', 'image/png'],
       isUploadByChunk = false, //if only upload on file, there is no need to turn into true
     ) => {
-      console.log('check4');
-
       const tx = await arweave.createTransaction({data: data}, key);
-      console.log('check5');
 
       tx.addTag(contentType[0], contentType[1]);
 

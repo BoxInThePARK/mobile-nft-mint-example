@@ -8,17 +8,13 @@
  * @format
  */
 
-import React, {useMemo} from 'react';
+import React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
 
 import {Provider as PaperProvider} from 'react-native-paper';
-import {ConnectionProvider, WalletProvider} from '@solana/wallet-adapter-react';
+import {ConnectionProvider} from '@solana/wallet-adapter-react';
 import {WalletAdapterNetwork} from '@solana/wallet-adapter-base';
 import {clusterApiUrl} from '@solana/web3.js';
-import {
-  PhantomWalletAdapter,
-  SolflareWalletAdapter,
-} from '@solana/wallet-adapter-wallets';
 
 import MainScreen from './MainScreen';
 const network = WalletAdapterNetwork.Devnet;
@@ -30,13 +26,11 @@ const App = () => {
     <ConnectionProvider
       config={{commitment: 'processed'}}
       endpoint={DEVNET_ENDPOINT}>
-      {/* <WalletProvider wallets={wallets}> */}
       <SafeAreaView style={styles.shell}>
         <PaperProvider>
           <MainScreen />
         </PaperProvider>
       </SafeAreaView>
-      {/* </WalletProvider> */}
     </ConnectionProvider>
   );
 };
