@@ -21,10 +21,12 @@ import {
   keypairIdentity,
   Metaplex,
   sol,
-  toBigNumber,
   toDateTime,
 } from '@metaplex-foundation/js';
-import {REACT_APP_METAPLEX_PRIVATE_KEY} from '@env';
+import {
+  REACT_APP_METAPLEX_PRIVATE_KEY,
+  REACT_APP_CANDY_MACHINE_ADDRESS,
+} from '@env';
 import bs58 from 'bs58';
 
 const MainScreen = () => {
@@ -99,38 +101,14 @@ const MainScreen = () => {
       );
       const treasury = metaplex.identity().publicKey;
 
-      // Create the Collection NFT.
-      console.log('Create the Collection NFT');
-      const {nft: collectionNft} = await metaplex.nfts().create({
-        name: 'SolMeet Dao',
-        uri: metaData.uri,
-        sellerFeeBasisPoints: 0,
-        isCollection: true,
-        updateAuthority: metaplex.identity(),
+      console.log('Fetch the Candy Machine');
+      let candyMachine = await metaplex.candyMachines().findByAddress({
+        address: new PublicKey(REACT_APP_CANDY_MACHINE_ADDRESS),
       });
 
-      //Create the Candy Machine
-      console.log('Create the Candy Machine');
-      let {candyMachine} = await metaplex.candyMachines().create({
-        // withoutCandyGuard: true,
-        itemsAvailable: toBigNumber(1),
-        itemSettings: {
-          type: 'configLines',
-          prefixName: '',
-          nameLength: 17,
-          prefixUri: 'https://arweave.net/',
-          uriLength: 48,
-          isSequential: true,
-        },
-        sellerFeeBasisPoints: 0,
-        symbol: 'SolMeet',
-        maxEditionSupply: toBigNumber(1),
-        // isMutable: true,
-        creators: [{address: selectedAccount.publicKey, share: 100}],
-        collection: {
-          address: collectionNft.address,
-          updateAuthority: metaplex.identity(),
-        },
+      console.log('Update the Candy Machine');
+      await metaplex.candyMachines().update({
+        candyMachine,
         guards: {
           // botTax: {lamports: sol(0.01), lastInstruction: true},
           solPayment: {amount: sol(0.1), destination: treasury},
@@ -138,13 +116,6 @@ const MainScreen = () => {
           // All other guards are disabled...
         },
       });
-      // console.log('Upload Metadata');
-      // const {uri} = await metaplex.nfts().uploadMetadata({
-      //   name: parsedMetaData.name,
-      //   description: parsedMetaData.description,
-      //   image: parsedMetaData.image,
-      // });
-      // console.log('uri', uri);
 
       console.log('Insert Item to the Candy Machine');
       await metaplex.candyMachines().insertItems({
@@ -159,7 +130,6 @@ const MainScreen = () => {
       const {nft} = await metaplex.candyMachines().mint({
         candyMachine,
         collectionUpdateAuthority: metapleKeypair.publicKey,
-        // mintAuthority: metaplex.identity(),
         owner: selectedAccount.publicKey,
       });
 

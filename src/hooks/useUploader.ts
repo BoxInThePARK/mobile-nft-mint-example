@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
 import RNFS, {DownloadFileOptions} from 'react-native-fs';
 import Arweave from 'arweave';
-import {REACT_APP_ARWEAVE_KEY, REACT_APP_ARWEAVE_KEY_WITH_TOKEN} from '@env';
+import {REACT_APP_ARWEAVE_KEY} from '@env';
 import {toByteArray} from 'react-native-quick-base64';
 import {JWKInterface} from 'arweave/node/lib/wallet';
 
@@ -37,7 +37,7 @@ export function useUploader() {
     const arweave = Arweave.init(initOptions);
 
     console.log('check1', RNFS.DocumentDirectoryPath);
-    const key: JWKInterface = JSON.parse(REACT_APP_ARWEAVE_KEY_WITH_TOKEN);
+    const key: JWKInterface = JSON.parse(REACT_APP_ARWEAVE_KEY);
 
     const getNftName = () =>
       `SolMeet-${(Math.random() + 1).toString(36).substring(4)}`;
