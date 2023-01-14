@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
 import RNFS, {DownloadFileOptions} from 'react-native-fs';
 import Arweave from 'arweave';
-import {REACT_APP_ARWEAVE_KEY, REACT_APP_ARWEAVE_KEY_WITH_TOKEN} from '@env';
+import {REACT_APP_ARWEAVE_KEY} from '@env';
 import {toByteArray} from 'react-native-quick-base64';
 import {JWKInterface} from 'arweave/node/lib/wallet';
 
@@ -25,7 +25,6 @@ export function useUploader() {
     const headers = {
       Accept: 'image/png',
       'Content-Type': 'image/png',
-      // Authorization: `Bearer [token]`,
     };
 
     const options: DownloadFileOptions = {
@@ -35,9 +34,7 @@ export function useUploader() {
     };
 
     const arweave = Arweave.init(initOptions);
-
-    console.log('check1', RNFS.DocumentDirectoryPath);
-    const key: JWKInterface = JSON.parse(REACT_APP_ARWEAVE_KEY_WITH_TOKEN);
+    const key: JWKInterface = JSON.parse(REACT_APP_ARWEAVE_KEY);
 
     const getNftName = () =>
       `SolMeet-${(Math.random() + 1).toString(36).substring(4)}`;
@@ -91,10 +88,7 @@ export function useUploader() {
         const uploader = await arweave.transactions.getUploader(tx);
 
         while (!uploader.isComplete) {
-          console.log('check9');
-
           await uploader.uploadChunk();
-          console.log('check10');
 
           console.log(
             `${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`,
@@ -128,7 +122,6 @@ export function useUploader() {
         const {id} = await runUpload(data);
 
         const imageUrl = id ? `https://arweave.net/${id}` : undefined;
-        console.log('imageUrl', imageUrl);
 
         const metadata = getMetadata(nftName, imageUrl, nftAttributes);
 
