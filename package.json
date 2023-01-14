@@ -23,7 +23,6 @@
     "arweave": "file:./patch/arweave",
     "browserify-zlib": "^0.2.0",
     "bs58": "^5.0.0",
-    "fastestsmallesttextencoderdecoder": "^1.0.22",
     "node-libs-react-native": "^1.2.1",
     "react": "18.1.0",
     "react-native": "0.70.1",
@@ -35,6 +34,7 @@
     "react-native-url-polyfill": "^1.3.0",
     "react-native-vector-icons": "^9.2.0",
     "swr": "^2.0.0",
+    "text-encoding": "^0.7.0",
     "yarn": "^1.22.19"
   },
   "devDependencies": {

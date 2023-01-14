@@ -12,7 +12,7 @@ import {
 import {Button} from 'react-native-paper';
 import {useConnection} from '@solana/wallet-adapter-react';
 import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
-import {Keypair, PublicKey, type Cluster} from '@solana/web3.js';
+import {Keypair, PublicKey} from '@solana/web3.js';
 import {useAuthorization} from './hooks/useAuthorization';
 import {useGuardedCallback} from './hooks/useGuardedCallback';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -23,40 +23,13 @@ import {
   sol,
   toBigNumber,
   toDateTime,
-  // walletAdapterIdentity,
 } from '@metaplex-foundation/js';
-import {Connection} from '@solana/web3.js';
 import {REACT_APP_METAPLEX_PRIVATE_KEY} from '@env';
 import bs58 from 'bs58';
-// import useSWR from 'swr';
-// import {
-//   SolanaMobileWalletAdapter,
-//   createDefaultAddressSelector,
-//   createDefaultAuthorizationResultCache,
-//   createDefaultWalletNotFoundHandler,
-// } from '@solana-mobile/wallet-adapter-mobile';
-
-// function getInferredClusterFromEndpoint(endpoint?: string): Cluster {
-//   if (!endpoint) {
-//     return 'mainnet-beta';
-//   }
-//   if (/devnet/i.test(endpoint)) {
-//     return 'devnet';
-//   } else if (/testnet/i.test(endpoint)) {
-//     return 'testnet';
-//   } else {
-//     return 'mainnet-beta';
-//   }
-// }
 
 const MainScreen = () => {
   const {authorizeSession, selectedAccount} = useAuthorization();
   const {connection} = useConnection();
-  // console.log('selectedAccount', selectedAccount.publicKey.toBase58());
-  // const {wallet} = useWallet(
-
-  // );
-  console.log('connection', connection);
   const [authorizationInProgress, setAuthorizationInProgress] = useState(false);
   const [imageURL, setImageURL] = useState<string>('');
   const uploader = useUploader();
@@ -112,15 +85,6 @@ const MainScreen = () => {
       const metapleKeypair = Keypair.fromSecretKey(
         bs58.decode(REACT_APP_METAPLEX_PRIVATE_KEY),
       );
-      console.log('publicKey', metapleKeypair.publicKey.toBase58());
-      //   addressSelector: createDefaultAddressSelector(), // const wallet = new SolanaMobileWalletAdapter({
-      //   appIdentity: {
-      //     uri: 'https://book.solmeet.dev/',
-      //   },
-      //   authorizationResultCache: createDefaultAuthorizationResultCache(),
-      //   cluster: getInferredClusterFromEndpoint(connection?.rpcEndpoint),
-      //   onWalletNotFound: createDefaultWalletNotFoundHandler(),
-      // });
 
       //Airdrop to metapleKeypair
       // console.log('Airdrop to metapleKeypair');
@@ -134,22 +98,6 @@ const MainScreen = () => {
         keypairIdentity(metapleKeypair),
       );
       const treasury = metaplex.identity().publicKey;
-
-      // const collectionAuthority = Keypair.generate();
-      // // Airdrop to collectionAuthority
-      // console.log('Airdrop to metapleKeypair');
-      // const result_2 = await requestAirdropGuarded(
-      //   collectionAuthority.publicKey,
-      // );
-
-      // if (result_2) {
-      //   const {
-      //     value: {err: err_2},
-      //   } = result_2;
-      //   if (err_2) {
-      //     console.log('airdrop result_2', err_2);
-      //   }
-      // }
 
       // Create the Collection NFT.
       console.log('Create the Collection NFT');
@@ -205,10 +153,6 @@ const MainScreen = () => {
       });
 
       candyMachine = await metaplex.candyMachines().refresh(candyMachine);
-      console.log('test 0', candyMachine.items[0].minted);
-      console.log('test 1', candyMachine.items[0].name);
-      console.log('test 2', candyMachine.items[0].uri);
-      console.log('candyMachine', candyMachine);
 
       //Mint
       console.log('Mint');
