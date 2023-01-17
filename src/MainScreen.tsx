@@ -93,7 +93,7 @@ const MainScreen = () => {
           bs58.decode(REACT_APP_METAPLEX_PRIVATE_KEY),
         );
 
-        //Airdrop to metapleKeypair
+        // Airdrop to metapleKeypair
         // console.log('Airdrop to metapleKeypair');
         // await requestAirdropGuarded(metapleKeypair.publicKey);
 
