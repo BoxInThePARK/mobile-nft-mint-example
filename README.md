@@ -2,7 +2,7 @@
 
 Author: [@rockluckycat](https://twitter.com/RockLuckyCat)
 
-> See this [doc]() for more details
+> See this [doc](https://book.solmeet.dev/notes/complete-guide-to-mint-solana-nft-on-mobile) for more details
 
 ## Overview
 - Creat candy machine through Metaplex js
