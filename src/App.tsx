@@ -8,8 +8,8 @@
  * @format
  */
 
-import React from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import React, {Suspense} from 'react';
+import {ActivityIndicator, SafeAreaView, StyleSheet, View} from 'react-native';
 
 import {Provider as PaperProvider} from 'react-native-paper';
 import {ConnectionProvider} from '@solana/wallet-adapter-react';
@@ -28,7 +28,17 @@ const App = () => {
       endpoint={DEVNET_ENDPOINT}>
       <SafeAreaView style={styles.shell}>
         <PaperProvider>
-          <MainScreen />
+          <Suspense
+            fallback={
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator
+                  size="large"
+                  style={styles.loadingIndicator}
+                />
+              </View>
+            }>
+            <MainScreen />
+          </Suspense>
         </PaperProvider>
       </SafeAreaView>
     </ConnectionProvider>
@@ -36,6 +46,13 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    height: '100%',
+    justifyContent: 'center',
+  },
+  loadingIndicator: {
+    marginVertical: 'auto',
+  },
   shell: {
     height: '100%',
   },
